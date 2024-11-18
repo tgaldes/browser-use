@@ -21,7 +21,6 @@ from browser_use.controller.views import (
 	ReturnTextAction,
 )
 from browser_use.utils import time_execution_sync
-import pdb
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +32,7 @@ class Controller:
 		self._register_default_actions()
 		self._output_func = output_func
 
+	# Only used in the tests, where we are given a default constructed Controller
 	def set_output_func(self, output_func: callable):
 		self._output_func = output_func
 
@@ -66,7 +66,6 @@ class Controller:
 		)
 		def click_element(params: ClickElementAction, browser: Browser):
 			state = browser._cached_state
-			#import pdb; pdb.set_trace()
 
 			if params.index not in state.selector_map:
 				print(state.selector_map)
@@ -179,7 +178,7 @@ class Controller:
 		# Register an action that passes text back to the user
 		@self.registry.action(
 			'Return text',
-			param_model=ReturnTextAction, # TODO
+			param_model=ReturnTextAction,
 			requires_browser=False,
 		)
 		def return_text(params: ReturnTextAction):
@@ -188,8 +187,6 @@ class Controller:
 			else:
 				logger.warning(f'No output function provided, returned text ignored.')
 			
-
-
 	def action(self, description: str, **kwargs):
 		"""Decorator for registering custom actions
 
