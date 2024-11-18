@@ -186,3 +186,32 @@ async def test_scroll_down(llm, controller):
 	actions = [h.model_output.action for h in history if h.model_output and h.model_output.action]
 	action_names = [list(action.model_dump(exclude_unset=True).keys())[0] for action in actions]
 	assert 'scroll_down' in action_names
+
+# run with pytest -k test_return_text
+@pytest.mark.asyncio
+async def test_return_text(llm, controller):
+	"""Test 'Return text' action and validate that desired text is returned."""
+
+	returned_text = ''
+	def handle_ouput(text):
+		nonlocal returned_text
+		returned_text = text
+
+	controller.set_output_func(handle_ouput)
+
+	agent = Agent(
+		task="Go to 'https://en.wikipedia.org/wiki/Internet'. Return the text of the first sentence that uses the phrase 'constituent network'",
+		llm=llm,
+		controller=controller,
+	)
+
+	history = await agent.run(max_steps=3)
+
+	# Validate that the 'return_text' action was executed
+	actions = [h.model_output.action for h in history if h.model_output and h.model_output.action]
+	action_names = [list(action.model_dump(exclude_unset=True).keys())[0] for action in actions]
+	assert 'return_text' in action_names
+
+	# Validate that the desired text was returned
+	assert returned_text, 'No text was returned'
+	assert 'constituent network' in returned_text, 'Desired text was not returned'

@@ -42,3 +42,6 @@ class ScrollDownAction(BaseModel):
 	amount: Optional[int] = (
 		None  # The number of pixels to scroll down. If None, scroll down one page
 	)
+
+class ReturnTextAction(BaseModel):
+	text: str

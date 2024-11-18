@@ -18,17 +18,23 @@ from browser_use.controller.views import (
 	ScrollDownAction,
 	SearchGoogleAction,
 	SwitchTabAction,
+	ReturnTextAction,
 )
 from browser_use.utils import time_execution_sync
+import pdb
 
 logger = logging.getLogger(__name__)
 
 
 class Controller:
-	def __init__(self, keep_open: bool = False):
+	def __init__(self, keep_open: bool = False, output_func: callable = None):
 		self.browser = Browser(keep_open=keep_open)
 		self.registry = Registry()
 		self._register_default_actions()
+		self._output_func = output_func
+
+	def set_output_func(self, output_func: callable):
+		self._output_func = output_func
 
 	def _register_default_actions(self):
 		"""Register all default browser actions"""
@@ -60,6 +66,7 @@ class Controller:
 		)
 		def click_element(params: ClickElementAction, browser: Browser):
 			state = browser._cached_state
+			#import pdb; pdb.set_trace()
 
 			if params.index not in state.selector_map:
 				print(state.selector_map)
@@ -168,6 +175,20 @@ class Controller:
 		def scroll_up(params: ScrollDownAction, browser: Browser):
 			driver = browser._get_driver()
 			driver.execute_script(f'window.scrollBy(0, -{params.amount});')
+
+		# Register an action that passes text back to the user
+		@self.registry.action(
+			'Return text',
+			param_model=ReturnTextAction, # TODO
+			requires_browser=False,
+		)
+		def return_text(params: ReturnTextAction):
+			if self._output_func is not None:
+				self._output_func(params.text)
+			else:
+				logger.warning(f'No output function provided, returned text ignored.')
+			
+
 
 	def action(self, description: str, **kwargs):
 		"""Decorator for registering custom actions
