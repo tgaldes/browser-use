@@ -56,6 +56,8 @@ class Browser:
 			chrome_options.add_argument('--no-sandbox')
 			chrome_options.add_argument('--window-size=1280,1024')
 			chrome_options.add_argument('--disable-extensions')
+			chrome_options.add_argument('--user-data-dir=/home/tgaldes/.config/google-chrome/')
+			chrome_options.add_argument('--profile-directory=Profile 1')
 
 			# Background process optimization
 			chrome_options.add_argument('--disable-background-timer-throttling')

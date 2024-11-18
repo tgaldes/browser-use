@@ -103,6 +103,7 @@ class Agent:
 	async def step(self) -> None:
 		"""Execute one step of the task"""
 		logger.info(f'\n📍 Step {self.n_steps}')
+		#import pdb; pdb.set_trace()
 		state = self.controller.browser.get_state(use_vision=self.use_vision)
 
 		try:
@@ -156,6 +157,7 @@ class Agent:
 	@time_execution_async('--get_next_action')
 	async def get_next_action(self, state: BrowserState) -> AgentOutput:
 		"""Get next action from LLM based on current state"""
+		#import pdb; pdb.set_trace()
 		new_message = AgentMessagePrompt(state).get_user_message()
 		input_messages = self.messages + [new_message]
 
